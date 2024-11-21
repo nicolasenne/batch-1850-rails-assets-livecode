@@ -1,0 +1,41 @@
+<div class="banner" style="background-image: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)), url('<%= @garden.banner_url %>');">
+  <div class="container">
+    <h1><%= @garden.name %></h1>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row mt-5">
+    <% @garden.plants.each do |plant| %>
+      <div class="col-4">
+        <div class="card-category" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('<%= plant.image_url %>')">
+          <%= plant.name %>
+          <%= link_to "+", plant_path(plant), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "card-remove-link" %>
+          <div class="chores">
+            <% completion = plant.completions.last %>
+            <% if completion.present? %>
+              <span>
+                Latest chore you've completed:
+                <em><%= completion.chore.name %></em>
+                on <%= completion.created_at.strftime('%B %d, %Y %l:%M %p') %>
+            <% end %>
+            <%= link_to new_plant_completion_path(plant) do %>
+              <i class="fa-solid fa-check"></i>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <div class="row my-5 justify-content-center">
+    <div class="col-4" data-controller="form">
+      <button class="btn btn-secondary display-form" data-form-target="button" data-action="click->form#display">Add a plant</button>
+
+      <%= simple_form_for [@garden, @plant], html: {class: "d-none", data: {form_target: "form"}} do |f| %>
+        <%= f.input :name, placeholder: "Palm tree" %>
+        <%= f.input :image_url, placeholder: "https://some_nice_image_found_on_google.jpg" %>
+        <%= f.submit "Add", class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+</div>
